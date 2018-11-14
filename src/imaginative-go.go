@@ -24,9 +24,6 @@ import (
 
 // Handle / path
 func defaultHome(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	// Prepare the template for home page
-	//var templates = template.Must(template.ParseFiles("templates/editorial/index_imaginative_go.html"))
-    
 	// Execute template
 	templates.ExecuteTemplate(w, "index_imaginative_go.html", nil)
 }
@@ -59,12 +56,15 @@ func seeCode(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	startIndex := strings.Index(dataSourceCode, start)
 	endIndex := strings.Index(dataSourceCode, end)
 	if startIndex > -1 {
-		// Function name found
+		// Function name start marker found
 
 		// Start searching for function end -- TODO help us with regex please
-		endIndex := strings.Index(dataSourceCode, end)
+		endIndex = strings.Index(dataSourceCode, end)
 		if endIndex > -1 {
-			// Do nothing when found
+			// Function name (one block) found
+
+			// We got the source code string on imaginative-go.go
+    		dataSourceCode = dataSourceCode[startIndex:endIndex]
 		} else {
 			// Function end marker not found
 			io.WriteString(w, "function "+start+" ending not found!")
@@ -72,25 +72,26 @@ func seeCode(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}
 	} else {
 		// Function start marker not found
-		io.WriteString(w, "function "+start+" not found!")
-		return
+		//io.WriteString(w, "function "+start+" not found!")
+		//return
+		dataSourceCode = ""
+		endIndex = 0
 	}
-
-    // We got the source code string on imaginative-go.go
-    dataSourceCode = dataSourceCode[startIndex:endIndex]
 
     // Start doing syntax highlight on it
     lexer := lexers.Get("go")
     iterator, _ := lexer.Tokenise(nil, dataSourceCode)
     style := styles.Get("github")
-    formatter := html.New(html.WithLineNumbers())
+    
+    // Do this if you want line number, formatter := html.New(html.WithLineNumbers())
+    formatter := html.New()
 
     var buffDataSourceCode bytes.Buffer
 
     formatter.Format(&buffDataSourceCode, style, iterator)
 
     niceSourceCode := buffDataSourceCode.String()
-    niceSourceCode = strings.Replace(niceSourceCode, `<pre style="background-color:#fff">`, `<pre style="background-color:#fff"><code>`, -1)
+    niceSourceCode = strings.Replace(niceSourceCode, `<pre style="background-color:#fff">`, `<pre style="background-color:#fff;width:100%;"><code>`, -1)
     niceSourceCode = strings.Replace(niceSourceCode, "</pre>", "</code></pre>", -1)
 
 	// Read the source code (src/examples/[fn].go) (stand alone code version)
@@ -105,25 +106,17 @@ func seeCode(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     lexer = lexers.Get("go")
     iterator, _ = lexer.Tokenise(nil, dataSaSourceCode)
     style = styles.Get("github")
-    formatter = html.New(html.WithLineNumbers())
+    
+    // Do this if you want line number, formatter = html.New(html.WithLineNumbers())
+    formatter = html.New()
 
     var buffDataSaSourceCode bytes.Buffer
 
     formatter.Format(&buffDataSaSourceCode, style, iterator)
 
     niceSaSourceCode := buffDataSaSourceCode.String()
-    niceSaSourceCode = strings.Replace(niceSaSourceCode, `<pre style="background-color:#fff">`, `<pre style="background-color:#fff"><code>`, -1)
+    niceSaSourceCode = strings.Replace(niceSaSourceCode, `<pre style="background-color:#fff">`, `<pre style="background-color:#fff;width:100%;"><code>`, -1)
     niceSaSourceCode = strings.Replace(niceSaSourceCode, "</pre>", "</code></pre>", -1)
-
-    // Prepare custom function for our code to make it unescaped string on the template
-    // funcMap := template.FuncMap{
-    //     "toHTML": func(s string) template.HTML {
-    //         return template.HTML(s)
-    //     },
-    // }
-
-	// Prepare templates
-	//var templates = template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/editorial/*.html"))
 
 	// Execute template
 	templates.ExecuteTemplate(w, "sample_imaginative_go.html", map[string]interface{}{"sourceCode": niceSourceCode, "standAloneSourceCode": niceSaSourceCode, "id": fns[0]})
@@ -250,16 +243,6 @@ func mongodbSelectRows(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	templates.ExecuteTemplate(w, "mongodb_select_rows.html", nil)
 }
 
-func genericPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var templates = template.Must(template.ParseFiles("templates/editorial/generic_imaginative_go.html"))
-	templates.ExecuteTemplate(w, "generic_imaginative_go.html", nil)
-}
-
-func elementsPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var templates = template.Must(template.ParseFiles("templates/editorial/elements_imaginative_go.html"))
-	templates.ExecuteTemplate(w, "elements_imaginative_go.html", nil)
-}
-
 func getQueryHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	keys, ok := r.URL.Query()["key"]
 
@@ -331,13 +314,14 @@ var mysqlProtocol string = "tcp"
 var mysqlDatabaseName string = "go_db"
 var mysqlPort string = "3306"
 
+// Define function for template
 var funcMap = template.FuncMap{
                 "toHTML": func(s string) template.HTML {
                     return template.HTML(s)
                 },
             }
 
-// Prepare templates
+// Prepare all templates
 var templates = template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/editorial/*.html"))
 
 func main() {
@@ -352,8 +336,6 @@ func main() {
 
 	// Registers the handler function for the given pattern
 	mux.GET("/", defaultHome)
-	mux.GET("/generic-page", genericPage)
-	mux.GET("/elements-page", elementsPage)
 	mux.GET("/see-code", seeCode)
 	mux.GET("/hello-world", helloWorld)
     mux.GET("/hello-world-2", helloWorld2)

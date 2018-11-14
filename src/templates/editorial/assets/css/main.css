@@ -116,7 +116,7 @@ input, select, textarea {
 /* Type */
 
 	body, input, select, textarea {
-		color: #404040;
+		color: #24292e;
 		font-family: "Open Sans", sans-serif;
 		font-size: 13pt;
 		font-weight: 400;
@@ -272,7 +272,8 @@ input, select, textarea {
 		border-radius: 0.375em;
 		border: solid 1px rgba(210, 215, 217, 0.75);
 		font-family: "Courier New", monospace;
-		font-size: 0.9em;
+		/*font-size: 0.9em;*/
+		font-size: 1em;
 		margin: 0 0.25em;
 		padding: 0.25em 0.65em;
 	}
@@ -1922,7 +1923,7 @@ input, select, textarea {
 		input[type="checkbox"] + label,
 		input[type="radio"] + label {
 			text-decoration: none;
-			color: #404040;
+			color: #24292e;
 			cursor: pointer;
 			display: inline-block;
 			font-size: 1em;
@@ -2663,8 +2664,10 @@ input, select, textarea {
 					-webkit-transform: rotate(45deg);
 					-ms-transform: rotate(45deg);
 					transform: rotate(45deg);
-					border-radius: 0.25rem;
-					border: solid 2px rgba(210, 215, 217, 0.75);
+					/*border-radius: 0.25rem;*/
+					border-radius: 3rem;
+					/*border: solid 2px rgba(210, 215, 217, 0.75);*/
+					border: solid 1px rgba(210, 215, 217, 0.75);
 					content: '';
 					display: block;
 					height: 7em;
@@ -3060,7 +3063,7 @@ input, select, textarea {
 			-webkit-transform: scaleX(-1);
 			-ms-transform: scaleX(-1);
 			transform: scaleX(-1);
-			color: #404040;
+			color: #24292e;
 			content: '\f002';
 			cursor: default;
 			display: block;
@@ -3270,7 +3273,7 @@ input, select, textarea {
 			}
 
 				#sidebar .toggle:before {
-					color: #404040;
+					color: #24292e;
 					margin-left: -0.0625em;
 					margin-top: -0.25em;
 					font-size: 1.1rem;
@@ -3457,7 +3460,7 @@ input, select, textarea {
 /* Footer */
 
 	#footer .copyright {
-		color: #9fa3a6;
+		color: #404040;
 		font-size: 0.9em;
 	}
 
