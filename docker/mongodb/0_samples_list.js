@@ -14,8 +14,15 @@ db.sample_content.insertMany(
 	"title": "URL router a.k.a HTTP request multiplexer",
 	"slug": "url-router-http-request-multiplexer",
 	"short_description": "Create URL router for your web based application.",
-	"tags": [{"tag": "beginner"},{"tag": "mux"},{"tag": "multiplexer"},{"tag": "http"}],
+	"tags": [{"tag": "beginner"},{"tag": "mux"},{"tag": "multiplexer"},{"tag": "http"},{"tag": "web"}],
 	"content_file": "url-router-http-request-multiplexer.md"
+   },
+   {
+	"title": "Template",
+	"slug": "template",
+	"short_description": "Use template for your web application.",
+	"tags": [{"tag": "beginner"},{"tag": "template"},{"tag": "web"}],
+	"content_file": "template.md"
    },
    {
 	"title": "Load a text file",
